@@ -10,7 +10,7 @@ const methods = [
   {
     id: 1,
     title: "Agile Development",
-    sector: "public",
+    sector: "Public sector",
     capabilities: ["Architecture, Engineering & DevOps"],
     phase: "Alpha",
     community: "Product and Strategy",
@@ -18,10 +18,26 @@ const methods = [
   {
     id: 2,
     title: "User Research",
-    sector: "private",
+    sector: "Private sector",
     capabilities: ["Digital Strategy & Experience"],
     phase: "Discovery",
     community: "Digital Design",
+  },
+  {
+    id: 3,
+    title: "User Interviews",
+    sector: "Public sector",
+    capabilities: ["Digital Strategy & Experience"],
+    phase: "Discovery",
+    community: "Digital Design",
+  },
+  {
+    id: 4,
+    title: "User Desk Research",
+    sector: "Public sector",
+    capabilities: ["Digital Strategy & Experience"],
+    phase: "Discovery",
+    community: "Data Science",
   },
   // Add more sample methods as needed
 ]
@@ -76,6 +92,16 @@ export default function MethodologyLibrary() {
         : [...prev[category], value],
     }))
   }
+
+  // Filtered search results for sidebar
+  const filteredMethods = methods.filter((method) => {
+    const matchesSearch = searchTerm
+      ? method.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (method.community && method.community.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (method.sector && method.sector.toLowerCase().includes(searchTerm.toLowerCase()))
+      : true
+    return matchesSearch
+  })
 
   const clearAllFilters = () => {
     setSelectedFilters({
@@ -151,128 +177,69 @@ export default function MethodologyLibrary() {
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
+                {/* Search Results Dropdown */}
+                {searchTerm && (
+                  <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-56 overflow-y-auto">
+                    {filteredMethods.length > 0 ? (
+                      filteredMethods.map((method) => (
+                        <div key={method.id} className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm">
+                          {method.title}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-gray-500 text-sm">No results found</div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Filters */}
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-sm font-medium text-gray-900">Filter by</h3>
-                  <button onClick={clearAllFilters} className="text-sm text-gray-500 hover:text-gray-700">
-                    Clear all
-                  </button>
+                  <h3 className="text-sm font-medium text-gray-900">Community <span className="text-xs text-gray-500">({filteredMethods.filter((m) => m.community).length}/20)</span></h3>
                 </div>
-
-                <div className="space-y-4">
-                  {/* Capability Filter */}
-                  <Disclosure defaultOpen>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex justify-between w-full text-left text-sm font-medium text-gray-900 hover:text-gray-700">
-                          <span>Capability ({filterCategories.capability.length})</span>
-                          <ChevronDownIcon
-                            className={`${open ? "rotate-180" : ""} h-4 w-4 transform transition-transform`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2 space-y-2">
-                          {filterCategories.capability.map((item) => (
-                            <label key={item} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                checked={selectedFilters.capability.includes(item)}
-                                onChange={() => handleFilterChange("capability", item)}
-                                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                              />
-                              <span className="ml-2 text-sm text-gray-700">{item}</span>
-                            </label>
-                          ))}
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-
-                  {/* Community Filter */}
-                  <Disclosure defaultOpen>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex justify-between w-full text-left text-sm font-medium text-gray-900 hover:text-gray-700">
-                          <span>Community ({filterCategories.community.length})</span>
-                          <ChevronDownIcon
-                            className={`${open ? "rotate-180" : ""} h-4 w-4 transform transition-transform`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2">
-                          <div className="max-h-44 overflow-y-auto space-y-2">
-                            {filterCategories.community.map((item) => (
-                              <label key={item} className="flex items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedFilters.community.includes(item)}
-                                  onChange={() => handleFilterChange("community", item)}
-                                  className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                                />
-                                <span className="ml-2 text-sm text-gray-700">{item}</span>
-                              </label>
-                            ))}
-                          </div>
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-
-                  {/* Delivery Framework Filter */}
-                  <Disclosure defaultOpen>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex justify-between w-full text-left text-sm font-medium text-gray-900 hover:text-gray-700">
-                          <span>Delivery framework ({filterCategories.deliveryFramework.length})</span>
-                          <ChevronDownIcon
-                            className={`${open ? "rotate-180" : ""} h-4 w-4 transform transition-transform`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2 space-y-2">
-                          {filterCategories.deliveryFramework.map((item) => (
-                            <label key={item} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                checked={selectedFilters.deliveryFramework.includes(item)}
-                                onChange={() => handleFilterChange("deliveryFramework", item)}
-                                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                              />
-                              <span className="ml-2 text-sm text-gray-700">{item}</span>
-                            </label>
-                          ))}
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-
-                  {/* Phase Filter */}
-                  <Disclosure defaultOpen>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex justify-between w-full text-left text-sm font-medium text-gray-900 hover:text-gray-700">
-                          <span>Phase ({filterCategories.phase.length})</span>
-                          <ChevronDownIcon
-                            className={`${open ? "rotate-180" : ""} h-4 w-4 transform transition-transform`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2 space-y-2">
-                          {filterCategories.phase.map((item) => (
-                            <label key={item} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                checked={selectedFilters.phase.includes(item)}
-                                onChange={() => handleFilterChange("phase", item)}
-                                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                              />
-                              <span className="ml-2 text-sm text-gray-700">{item}</span>
-                            </label>
-                          ))}
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
+                <div className="max-h-40 overflow-y-auto mb-4 border-b border-gray-100 pb-2">
+                  {filterCategories.community.map((item) => (
+                    <label key={item} className="flex items-center mb-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedFilters.community.includes(item)}
+                        onChange={() => handleFilterChange("community", item)}
+                        className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{item}</span>
+                    </label>
+                  ))}
                 </div>
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-900">Delivery framework <span className="text-xs text-gray-500">(1/2)</span></h3>
+                  {filterCategories.deliveryFramework.map((item) => (
+                    <label key={item} className="flex items-center mb-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedFilters.deliveryFramework.includes(item)}
+                        onChange={() => handleFilterChange("deliveryFramework", item)}
+                        className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{item}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-900">Phase <span className="text-xs text-gray-500">(1/6)</span></h3>
+                  {filterCategories.phase.map((item) => (
+                    <label key={item} className="flex items-center mb-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedFilters.phase.includes(item)}
+                        onChange={() => handleFilterChange("phase", item)}
+                        className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{item}</span>
+                    </label>
+                  ))}
+                </div>
+                <button onClick={clearAllFilters} className="text-xs text-gray-500 hover:text-gray-700 underline mt-2">Clear all</button>
               </div>
             </div>
 
